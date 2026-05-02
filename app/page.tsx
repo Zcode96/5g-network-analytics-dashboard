@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { SimulationProvider, useSimulation } from "@/lib/simulation-context"
 import { DashboardSidebar } from "@/components/dashboard/sidebar"
 import { DashboardHeader } from "@/components/dashboard/header"
 import { HealthCards } from "@/components/dashboard/health-cards"
@@ -9,31 +10,40 @@ import { MimoStats } from "@/components/dashboard/mimo-stats"
 import { CoverageMap } from "@/components/dashboard/coverage-map"
 import { Menu, X } from "lucide-react"
 
-export default function Dashboard() {
+function DashboardContent() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const { mode, config, logs } = useSimulation()
 
   const handleExport = () => {
-    // Create a simple network report
+    // Create a comprehensive network report with current simulation data
     const reportData = {
       generatedAt: new Date().toISOString(),
+      networkMode: mode,
       networkStatus: "Healthy",
       metrics: {
-        bandwidth: "2.4 Gbps",
-        connectedDevices: 1847,
-        packetLoss: "0.02%",
-        activeProtocol: "5G NR",
-        averageSNR: "32 dB",
-        averageLatency: "11 ms",
-        mimoEfficiency: "85%",
+        bandwidth: mode === "5G" ? "2.4 Gbps" : "150 Mbps",
+        connectedDevices: Math.floor(config.maxDevices * 0.9),
+        packetLoss: `${config.packetLossBase}%`,
+        activeProtocol: mode === "5G" ? "5G NR" : "4G LTE",
+        averageSNR: `${config.baseSnr} dB`,
+        averageLatency: `${config.baseLatency} ms`,
+        mimoStreams: config.mimoStreams,
+        mimoEfficiency: mode === "5G" ? "85%" : "68%",
         towersCoverage: "87%"
-      }
+      },
+      recentLogs: logs.slice(0, 10).map(log => ({
+        timestamp: log.timestamp.toISOString(),
+        type: log.type,
+        message: log.message,
+        severity: log.severity,
+      })),
     }
     
     const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `network-report-${new Date().toISOString().split('T')[0]}.json`
+    a.download = `network-report-${mode}-${new Date().toISOString().split('T')[0]}.json`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -93,6 +103,9 @@ export default function Dashboard() {
           <footer className="mt-8 flex flex-col gap-3 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between lg:mt-12">
             <p>&copy; 2024 NetPulse Analytics. All rights reserved.</p>
             <div className="flex items-center gap-4">
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-primary font-medium">
+                {mode} Mode
+              </span>
               <span>Last sync: Just now</span>
               <div className="flex items-center gap-1.5">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -103,5 +116,13 @@ export default function Dashboard() {
         </div>
       </main>
     </div>
+  )
+}
+
+export default function Dashboard() {
+  return (
+    <SimulationProvider>
+      <DashboardContent />
+    </SimulationProvider>
   )
 }

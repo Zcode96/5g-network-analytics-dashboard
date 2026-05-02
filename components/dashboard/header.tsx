@@ -2,18 +2,33 @@
 
 import { Download, Bell, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useSimulation } from "@/lib/simulation-context"
 
 interface DashboardHeaderProps {
   onExport: () => void
 }
 
 export function DashboardHeader({ onExport }: DashboardHeaderProps) {
+  const { mode, isSimulating } = useSimulation()
+
   return (
     <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Network Dashboard</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-foreground">Network Dashboard</h1>
+          <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+            mode === "5G" 
+              ? "bg-emerald-100 text-emerald-700" 
+              : "bg-amber-100 text-amber-700"
+          }`}>
+            <span className={`h-1.5 w-1.5 rounded-full ${
+              mode === "5G" ? "bg-emerald-500" : "bg-amber-500"
+            } ${isSimulating ? "animate-pulse" : ""}`} />
+            {mode}
+          </span>
+        </div>
         <p className="text-sm text-muted-foreground">
-          Monitor your 5G infrastructure in real-time
+          Monitor your {mode} infrastructure in real-time
         </p>
       </div>
 
