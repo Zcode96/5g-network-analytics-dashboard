@@ -1,12 +1,17 @@
 # 5g-network-analytics-dashboard
+**Settings Panel** - Toggle simulation on/off and switch between 4G and 5G modes. Shows mode-specific specs (speed, latency, MIMO configuration, capacity).
+**Network Logs** - A timestamped log panel in the sidebar that records signal drops, handovers, congestion events, and recovery notifications. Logs automatically clear after 50 entries.
+**4G/5G Mode Toggle** - Switching modes adapts the entire UI:
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+- Signal Monitor: Different base SNR/latency values and axis ranges (5G: 30dB/8ms, 4G: 18dB/35ms)
+- Health Cards: Bandwidth adjusts (2.4Gbps vs 150Mbps), device capacity changes
+- MIMO Stats: 4x4 streams for 5G, 2x2 for 4G with different efficiency levels
+- Coverage Map: 5G shows stronger signals with fewer warnings; 4G shows degraded signals and may have offline towers
 
-## Built with v0
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_IuhP2DYfMQAF5hwDBOWjgi1dzLWE)
+**Realistic Fluctuations** - All metrics fluctuate with smooth random walks. Signal drops and latency spikes occur randomly (more frequently in 4G mode) and are logged with timestamps
+
 
 ## Getting Started
 
@@ -24,12 +29,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Learn More
 
-To learn more, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 - [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
 
 <a href="https://v0.app/chat/api/kiro/clone/Zcode96/5g-network-analytics-dashboard" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
